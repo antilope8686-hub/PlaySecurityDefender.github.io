@@ -457,8 +457,31 @@
             <div class="start-subtitle">Fortifica tu Servidor</div>
             
             <div class="start-description">
-                <p>¡Bienvenido, administrador de sistemas! Tu servidor está bajo amenaza constante de ciberataques. Tu misión es construir un sistema de defensa robusto utilizando medidas de seguridad estratégicas para proteger los datos críticos.</p>
+                <p>¡Bienvenido, administrador de sistemas! Tu servidor está bajo amenaza constante de ciberataques. Tu misión es construir un sistema de defensa robusto utilizando medidas de seguridad estratégicas para proteger los datos críticos. Aprende a identificar Phishing, Virus y troyanos eliminando los correos sospechosos</p>
             </div>
+            <div id="pantalla-inicio" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); color: white; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: Arial, sans-serif; text-align: center; padding: 20px;">
+    
+    <h1 style="color: #00ffcc; text-shadow: 2px 2px 4px #000;">PROYECTO FINAL: SECURITY DEFENDER</h1>
+    <div style="background: #333; padding: 15px; border-radius: 10px; border: 2px solid #00ffcc; margin-bottom: 20px;">
+        <p style="margin: 5px; font-size: 18px;"><strong>Participante:</strong> Emilio Almonte</p>
+        <p style="margin: 5px; font-size: 16px;"><strong>Cohorte:</strong> MATIC UASD-Santo Domingo</p>
+        <p style="margin: 5px; font-size: 16px;"><strong>Tema:</strong> Ciberseguridad y Defensa de Redes</p>
+    </div>
+
+    <div style="max-width: 600px; margin-bottom: 30px;">
+        <h3>🎯 Objetivo de Aprendizaje:</h3>
+        <p>Identificar y neutralizar amenazas informáticas en tiempo real para proteger la integridad del servidor.</p>
+        
+        <h3>🕹️ Instrucciones:</h3>
+        <p>1. Usa las flechas/mouse para moverte, selecciona el tipo de protección y presiona Iniciar oleada.<br>
+           2. Evita los paquetes rojos (Malware).<br>
+           3. Captura los escudos verdes (Firewall).</p>
+    </div>
+
+    <button onclick="document.getElementById('pantalla-inicio').style.display='none';" style="padding: 15px 40px; font-size: 20px; background-color: #00ffcc; color: #000; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+        ▶ COMENZAR JUEGO
+    </button>
+</div>
 
             <div class="start-features">
                 <div class="feature-item">
@@ -667,14 +690,16 @@
 
     <div id="game-over-screen" class="game-over">
         <h2 id="game-over-title">¡Victoria!</h2>
-        <p id="game-over-message">Has protegido el servidor exitosamente</p>
+        <p id="game-over-message">Has protegido el servidor exitosamente. Tu puntuación demuestra que sabes identificar amenazas</p>
         <p id="final-score"></p>
         <button onclick="location.reload()">🔄 Jugar de Nuevo</button>
     </div>
 
     <div id="level-complete-screen" class="level-complete">
         <h2>🎉 ¡Nivel Completado! 🎉</h2>
-        <p id="level-complete-message">Has completado exitosamente el nivel</p>
+        <p id="level-complete-message">Has completado exitosamente el nivel. ¡Felicidades, eres un CRACK! 🌟
+
+Has superado el nivel y superado tus propios límites. Tómate un segundo para celebrar... ¡y vamos a por el siguiente récord! 🚀</p>
         
         <div class="level-rewards">
             <div class="reward-item">
@@ -1508,4 +1533,5 @@
         }
     </script>
 </body>
+
 </html>
