@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSecurity Defender</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #00ff41;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+            overflow-x: hidden;
+        }
+
+        #game-container {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff41;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+            max-width: 1400px;
+            width: 100%;
+            max-height: 98vh;
+            overflow-y: auto;
+            display: grid;
+            grid-template-rows: auto auto 1fr auto auto auto;
+            gap: 10px;
+        }
+
+        #start-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        #start-screen.hidden {
+            display: none;
+        }
+
+        .start-content {
+            background: rgba(0, 0, 0, 0.9);
+            border: 3px solid #00ff41;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 900px;
+            box-shadow: 0 0 50px rgba(0, 255, 65, 0.5);
+            text-align: center;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .start-title {
+            font-size: 3em;
+            color: #00ff41;
+            text-shadow: 0 0 20px #00ff41;
+            margin-bottom: 20px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                text-shadow: 0 0 20px #00ff41, 0 0 30px #00ff41;
+            }
+            50% {
+                text-shadow: 0 0 30px #00ff41, 0 0 40px #00ff41, 0 0 50px #00ff41;
+            }
+        }
+
+        .start-subtitle {
+            font-size: 1.5em;
+            color: #64b5f6;
+            margin-bottom: 30px;
+        }
+
+        .start-description {
+            color: #aaa;
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .start-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .feature-item {
+            background: rgba(0, 100, 200, 0.2);
+            border: 1px solid #64b5f6;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .feature-icon {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .feature-title {
+            color: #00ff41;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+
+        .feature-desc {
+            color: #aaa;
+            font-size: 0.9em;
+        }
+
+        .play-button {
+            background: linear-gradient(135deg, #00ff41 0%, #00cc33 100%);
+            border: none;
+            color: #000;
+            padding: 20px 60px;
+            font-size: 1.8em;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .play-button:hover {
+            background: linear-gradient(135deg, #00cc33 0%, #009922 100%);
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.8);
+            transform: scale(1.1);
+        }
+
+        .start-instructions {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #00ff41;
+            color: #64b5f6;
+            font-size: 0.9em;
+        }
+
+        h1 {
+            text-align: center;
+            color: #00ff41;
+            text-shadow: 0 0 10px #00ff41;
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        #game-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            background: rgba(0, 50, 100, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            gap: 8px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 80px;
+        }
+
+        .info-label {
+            font-size: 0.7em;
+            color: #64b5f6;
+        }
+
+        .info-value {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #00ff41;
+        }
+
+        #game-canvas {
+            border: 2px solid #00ff41;
+            background: #0a1929;
+            display: block;
+            margin: 0 auto;
+            cursor: crosshair;
+            max-width: 100%;
+            height: auto;
+        }
+
+        #defense-shop {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 8px;
+        }
+
+        .defense-button {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2a5298 100%);
+            border: 2px solid #64b5f6;
+            color: #fff;
+            padding: 10px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+        }
+
+        .defense-button:hover {
+            background: linear-gradient(135deg, #2a5298 0%, #3d6bb3 100%);
+            box-shadow: 0 0 15px rgba(100, 181, 246, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .defense-button.selected {
+            background: linear-gradient(135deg, #00ff41 0%, #00cc33 100%);
+            border-color: #00ff41;
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.7);
+        }
+
+        .defense-button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #00ff41;
+            border: none;
+            color: #000;
+            padding: 10px 20px;
+            font-size: 0.95em;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #00cc33;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        #messages {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #00ff41;
+            border-radius: 5px;
+            padding: 10px;
+            min-height: 40px;
+            text-align: center;
+            color: #00ff41;
+            font-size: 0.9em;
+        }
+
+        #glossary {
+            background: rgba(0, 50, 100, 0.3);
+            border: 1px solid #64b5f6;
+            border-radius: 5px;
+            padding: 10px;
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        #glossary h3 {
+            color: #64b5f6;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        .glossary-item {
+            margin-bottom: 8px;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+        }
+
+        .glossary-title {
+            color: #00ff41;
+            font-weight: bold;
+            margin-bottom: 3px;
+            font-size: 0.85em;
+        }
+
+        .glossary-description {
+            color: #aaa;
+            font-size: 0.75em;
+        }
+
+        footer {
+            text-align: center;
+            color: #64b5f6;
+            font-size: 0.75em;
+            padding-top: 10px;
+            border-top: 1px solid #00ff41;
+        }
+
+        .defense-info {
+            font-size: 0.7em;
+            margin-top: 3px;
+            color: #64b5f6;
+        }
+
+        .game-over {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 3px solid #00ff41;
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 1000;
+            display: none;
+        }
+
+        .game-over h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #00ff41;
+        }
+
+        .game-over.victory h2 {
+            color: #00ff41;
+        }
+
+        .game-over.defeat h2 {
+            color: #ff4444;
+            text-shadow: 0 0 20px #ff4444;
+        }
+
+        .bonus-item {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .level-complete {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 3px solid #00ff41;
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 1000;
+            display: none;
+        }
+
+        .level-complete h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #00ff41;
+            text-shadow: 0 0 20px #00ff41;
+        }
+
+        .level-rewards {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .reward-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .reward-icon {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .reward-amount {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #00ff41;
+        }
+
+        .reward-label {
+            font-size: 0.8em;
+            color: #64b5f6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Pantalla de Inicio -->
+    <div id="start-screen">
+        <div class="start-content">
+            <div class="start-title">🛡️ CYBERSECURITY DEFENDER 🛡️</div>
+            <div class="start-subtitle">Fortifica tu Servidor</div>
+            
+            <div class="start-description">
+                <p>¡Bienvenido, administrador de sistemas! Tu servidor está bajo amenaza constante de ciberataques. Tu misión es construir un sistema de defensa robusto utilizando medidas de seguridad estratégicas para proteger los datos críticos.</p>
+            </div>
+
+            <div class="start-features">
+                <div class="feature-item">
+                    <div class="feature-icon">🎯</div>
+                    <div class="feature-title">15+ Tipos de Ataques</div>
+                    <div class="feature-desc">Desde SQL Injection hasta Zero-Day exploits</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🛡️</div>
+                    <div class="feature-title">8 Defensas Únicas</div>
+                    <div class="feature-desc">Firewall, Antivirus, WAF, IDS/IPS y más</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">10 Niveles Progresivos</div>
+                    <div class="feature-desc">Dificultad creciente con más de 40 oleadas</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🎓</div>
+                    <div class="feature-title">Sistema de Niveles</div>
+                    <div class="feature-desc">Sube de nivel y desbloquea mejoras</div>
+                </div>
+            </div>
+
+            <button class="play-button" onclick="startGame()">▶️ JUGAR AHORA</button>
+
+            <div class="start-instructions">
+                <strong>CÓMO JUGAR:</strong><br>
+                1. Selecciona una defensa de la tienda<br>
+                2. Colócala en el mapa (no en el camino azul)<br>
+                3. Inicia la oleada y defiende tu servidor<br>
+                4. Cada defensa es efectiva contra ciertos ataques (2x daño)<br>
+                5. Sube de nivel para desbloquear mejoras y defensas
+            </div>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <h1>🛡️ CyberSecurity Defender 🛡️</h1>
+        
+        <div id="game-info">
+            <div class="info-item">
+                <span class="info-label">💰 Dinero</span>
+                <span class="info-value" id="money">500</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">❤️ Servidor</span>
+                <span class="info-value" id="health">100</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">📊 Nivel</span>
+                <span class="info-value" id="level">1</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">🌊 Oleada</span>
+                <span class="info-value" id="wave">1</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">⚔️ Enemigos</span>
+                <span class="info-value" id="enemies">0</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">⭐ Puntuación</span>
+                <span class="info-value" id="score">0</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">📈 Experiencia</span>
+                <span class="info-value" id="xp">0/100</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">🏆 Nivel Jugador</span>
+                <span class="info-value" id="player-level">1</span>
+            </div>
+        </div>
+
+        <canvas id="game-canvas" width="950" height="400"></canvas>
+
+        <div id="messages">Selecciona una defensa y haz clic en el mapa para construir. ¡Protege el servidor!</div>
+
+        <div id="level-info" style="background: rgba(0, 100, 200, 0.3); border: 1px solid #64b5f6; border-radius: 5px; padding: 10px; margin-bottom: 1px; text-align: center;">
+            <h3 style="color: #64b5f6; margin-bottom: 5px;" id="level-name">Nivel 1: Introducción</h3>
+            <p style="color: #aaa; font-size: 0.9em;" id="level-description">Aprende lo básico defendiendo contra ataques simples</p>
+        </div>
+
+        <div id="defense-shop">
+            <button class="defense-button" data-defense="firewall">
+                🔥 Firewall
+                <div class="defense-info">$100 | DoS/Brute</div>
+            </button>
+            <button class="defense-button" data-defense="antivirus">
+                🛡️ Antivirus
+                <div class="defense-info">$120 | Malware</div>
+            </button>
+            <button class="defense-button" data-defense="waf">
+                🌐 WAF
+                <div class="defense-info">$150 | SQL/XSS</div>
+            </button>
+            <button class="defense-button" data-defense="auth">
+                🔐 Auth MFA
+                <div class="defense-info">$130 | Phishing</div>
+            </button>
+            <button class="defense-button" data-defense="encryption">
+                🔒 Cifrado
+                <div class="defense-info">$140 | MITM</div>
+            </button>
+            <button class="defense-button" data-defense="ids">
+                👁️ IDS/IPS
+                <div class="defense-info">$180 | Zero-Day</div>
+            </button>
+            <button class="defense-button" data-defense="honeypot" id="honeypot-button" style="display:none;">
+                🍯 Honeypot
+                <div class="defense-info">$200 | Todos</div>
+            </button>
+            <button class="defense-button" data-defense="quantum" id="quantum-button" style="display:none;">
+                ⚛️ Quantum
+                <div class="defense-info">$250 | Todos</div>
+            </button>
+        </div>
+
+        <div id="controls">
+            <button id="start-wave">▶️ Iniciar Oleada</button>
+            <button id="next-level" style="display:none;">🚀 Siguiente Nivel</button>
+            <button id="toggle-glossary">📚 Glosario</button>
+        </div>
+
+        <div id="glossary">
+            <h3>📚 Glosario de Ciberseguridad</h3>
+            <div class="glossary-item">
+                <div class="glossary-title">🔴 Inyección SQL</div>
+                <div class="glossary-description">Ataque que explota vulnerabilidades en bases de datos para ejecutar comandos maliciosos.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-title">🔴 XSS (Cross-Site Scripting)</div>
+                <div class="glossary-description">Inyección de scripts maliciosos en páginas web vistas por otros usuarios.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-title">🔴 Phishing</div>
+                <div class="glossary-description">Técnica de ingeniería social para robar credenciales haciéndose pasar por entidades confiables.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-title">🔴 Malware/Virus</div>
+                <div class="glossary-description">Software malicioso diseñado para dañar, explotar o acceder sin autorización a sistemas.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-title">🔴 DoS/DDoS</div>
+                <div class="glossary-description">Ataque de denegación de servicio que satura un servidor con tráfico masivo.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-title">🟢 Firewall</div>
+                <div class="glossary-description">Sistema que controla el tráfico de red bloqueando conexiones no autorizadas.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-title">🟢 Antivirus</div>
+                <div class="glossary-description">Software que detecta y elimina malware y virus del sistema.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-title">🟢 WAF (Web Application Firewall)</div>
+                <div class="glossary-description">Protege aplicaciones web filtrando y monitoreando tráfico HTTP.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-title">🟢 Autenticación Multifactor</div>
+                <div class="glossary-description">Método de verificación que requiere múltiples formas de identificación.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-title">🟢 Cifrado</div>
+                <div class="glossary-description">Proceso de codificar información para protegerla de accesos no autorizados.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-title">🔴 Ransomware</div>
+                <div class="glossary-description">Malware que cifra archivos y exige rescate para restaurar el acceso.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-title">🔴 Troyano</div>
+                <div class="glossary-description">Software malicioso disfrazado como legítimo para infiltrarse en sistemas.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-title">🔴 Man-in-the-Middle (MITM)</div>
+                <div class="glossary-description">Ataque que intercepta comunicaciones entre dos partes sin su conocimiento.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-title">🔴 Ataque de Fuerza Bruta</div>
+                <div class="glossary-description">Intento sistemático de adivinar contraseñas probando todas las combinaciones.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-title">🔴 Zero-Day</div>
+                <div class="glossary-description">Vulnerabilidad desconocida que se explota antes de que exista un parche.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-title">🟢 IDS/IPS</div>
+                <div class="glossary-description">Sistema de Detección/Prevención de Intrusos que monitorea actividad maliciosa.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-title">🟢 Honeypot</div>
+                <div class="glossary-description">Sistema trampa diseñado para atraer y detectar atacantes.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-title">🟢 Cifrado Cuántico</div>
+                <div class="glossary-description">Tecnología avanzada de cifrado basada en principios de la mecánica cuántica.</div>
+            </div>
+        </div>
+
+        <footer>
+            Desarrollado por Emilio Almonte - Cohorte MATIC UASD-Santo Domingo | Proyecto Final: Software Educativo
+        </footer>
+    </div>
+
+    <div id="game-over-screen" class="game-over">
+        <h2 id="game-over-title">¡Victoria!</h2>
+        <p id="game-over-message">Has protegido el servidor exitosamente</p>
+        <p id="final-score"></p>
+        <button onclick="location.reload()">🔄 Jugar de Nuevo</button>
+    </div>
+
+    <div id="level-complete-screen" class="level-complete">
+        <h2>🎉 ¡Nivel Completado! 🎉</h2>
+        <p id="level-complete-message">Has completado exitosamente el nivel</p>
+        
+        <div class="level-rewards">
+            <div class="reward-item">
+                <div class="reward-icon">💰</div>
+                <div class="reward-amount" id="reward-money">+0</div>
+                <div class="reward-label">Dinero</div>
+            </div>
+            <div class="reward-item">
+                <div class="reward-icon">⭐</div>
+                <div class="reward-amount" id="reward-xp">+0</div>
+                <div class="reward-label">Experiencia</div>
+            </div>
+            <div class="reward-item">
+                <div class="reward-icon">🔓</div>
+                <div class="reward-amount" id="reward-unlock">Ninguno</div>
+                <div class="reward-label">Desbloqueo</div>
+            </div>
+        </div>
+        
+        <button id="continue-button">🚀 Continuar al Siguiente Nivel</button>
+    </div>
+
+    <script>
+        // Configuración del canvas y contexto
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const tileSize = 50;
+
+        // Estado del juego
+        let gameState = {
+            money: 500,
+            health: 100,
+            wave: 1,
+            score: 0,
+            selectedDefense: null,
+            waveActive: false,
+            gameOver: false,
+            level: 1,
+            playerLevel: 1,
+            xp: 0,
+            xpToNextLevel: 100,
+            coins: 0,
+            bonuses: []
+        };
+
+        // Camino para los enemigos (coordenadas ajustadas)
+        const path = [
+            {x: 0, y: 225}, {x: 180, y: 225}, {x: 180, y: 100},
+            {x: 400, y: 100}, {x: 400, y: 320}, {x: 620, y: 320},
+            {x: 620, y: 170}, {x: 850, y: 170}, {x: 900, y: 170}
+        ];
+
+        // Definición de tipos de enemigos (expandido)
+        const enemyTypes = {
+            sql: { name: 'SQL Injection', health: 60, speed: 1.2, reward: 30, color: '#ff5722', emoji: '💉' },
+            xss: { name: 'XSS', health: 50, speed: 1.5, reward: 25, color: '#ff9800', emoji: '📜' },
+            phishing: { name: 'Phishing', health: 70, speed: 1, reward: 35, color: '#ffc107', emoji: '🎣' },
+            malware: { name: 'Malware', health: 80, speed: 0.8, reward: 40, color: '#9c27b0', emoji: '🦠' },
+            dos: { name: 'DoS/DDoS', health: 100, speed: 0.6, reward: 50, color: '#f44336', emoji: '💥' },
+            ransomware: { name: 'Ransomware', health: 120, speed: 0.7, reward: 60, color: '#e91e63', emoji: '🔐' },
+            trojan: { name: 'Troyano', health: 90, speed: 1.1, reward: 45, color: '#673ab7', emoji: '🐴' },
+            mitm: { name: 'Man-in-Middle', health: 85, speed: 1.3, reward: 55, color: '#3f51b5', emoji: '👥' },
+            bruteforce: { name: 'Fuerza Bruta', health: 110, speed: 0.9, reward: 65, color: '#ff6f00', emoji: '🔨' },
+            zeroday: { name: 'Zero-Day', health: 150, speed: 1.0, reward: 100, color: '#d32f2f', emoji: '💀' },
+            botnet: { name: 'Botnet', health: 130, speed: 0.8, reward: 70, color: '#795548', emoji: '🤖' },
+            spyware: { name: 'Spyware', health: 75, speed: 1.4, reward: 45, color: '#607d8b', emoji: '👁️' },
+            keylogger: { name: 'Keylogger', health: 65, speed: 1.3, reward: 40, color: '#8bc34a', emoji: '⌨️' },
+            rootkit: { name: 'Rootkit', health: 140, speed: 0.7, reward: 80, color: '#e57373', emoji: '👻' },
+            worm: { name: 'Gusano', health: 95, speed: 1.2, reward: 55, color: '#64b5f6', emoji: '🐛' }
+        };
+
+        // Definición de defensas (expandido)
+        const defenseTypes = {
+            firewall: { name: 'Firewall', cost: 100, damage: 15, range: 100, effective: ['dos', 'bruteforce'], color: '#ff5252', emoji: '🔥' },
+            antivirus: { name: 'Antivirus', cost: 120, damage: 20, range: 80, effective: ['malware', 'ransomware', 'trojan'], color: '#448aff', emoji: '🛡️' },
+            waf: { name: 'WAF', cost: 150, damage: 25, range: 90, effective: ['sql', 'xss'], color: '#69f0ae', emoji: '🌐' },
+            auth: { name: 'Auth MFA', cost: 130, damage: 18, range: 85, effective: ['phishing', 'bruteforce'], color: '#ffd54f', emoji: '🔐' },
+            encryption: { name: 'Cifrado', cost: 140, damage: 12, range: 100, effective: ['mitm', 'phishing', 'ransomware'], color: '#ba68c8', emoji: '🔒' },
+            ids: { name: 'IDS/IPS', cost: 180, damage: 22, range: 110, effective: ['zeroday', 'trojan', 'mitm'], color: '#26c6da', emoji: '👁️' },
+            honeypot: { name: 'Honeypot', cost: 200, damage: 30, range: 120, effective: ['all'], color: '#ff9800', emoji: '🍯' },
+            quantum: { name: 'Cifrado Cuántico', cost: 250, damage: 35, range: 130, effective: ['all'], color: '#00bcd4', emoji: '⚛️' }
+        };
+
+        // Arrays de juego
+        let enemies = [];
+        let defenses = [];
+
+        // Definición de niveles y oleadas (expandido con 10 niveles)
+        const levels = [
+            {
+                name: "Nivel 1: Introducción",
+                description: "Aprende lo básico defendiendo contra ataques simples",
+                waves: [
+                    [{ type: 'sql', count: 5, interval: 1500 }],
+                    [{ type: 'xss', count: 6, interval: 1300 }],
+                    [{ type: 'sql', count: 4, interval: 1200 }, { type: 'xss', count: 4, interval: 1400 }]
+                ],
+                reward: { money: 200, xp: 50 },
+                unlocks: []
+            },
+            {
+                name: "Nivel 2: Ataques Sociales",
+                description: "Enfrenta phishing, malware y troyanos",
+                waves: [
+                    [{ type: 'phishing', count: 6, interval: 1200 }],
+                    [{ type: 'malware', count: 5, interval: 1100 }],
+                    [{ type: 'trojan', count: 4, interval: 1300 }, { type: 'phishing', count: 5, interval: 1100 }],
+                    [{ type: 'trojan', count: 5, interval: 1000 }, { type: 'malware', count: 5, interval: 1100 }, { type: 'sql', count: 4, interval: 1200 }]
+                ],
+                reward: { money: 250, xp: 75 },
+                unlocks: []
+            },
+            {
+                name: "Nivel 3: Ataques Avanzados",
+                description: "DoS, Ransomware y ataques Man-in-the-Middle",
+                waves: [
+                    [{ type: 'dos', count: 3, interval: 1800 }],
+                    [{ type: 'ransomware', count: 4, interval: 1400 }, { type: 'xss', count: 6, interval: 900 }],
+                    [{ type: 'mitm', count: 5, interval: 1100 }, { type: 'malware', count: 5, interval: 1000 }],
+                    [{ type: 'dos', count: 4, interval: 1500 }, { type: 'ransomware', count: 4, interval: 1200 }, { type: 'trojan', count: 5, interval: 1000 }],
+                    [{ type: 'mitm', count: 6, interval: 1000 }, { type: 'dos', count: 4, interval: 1400 }, { type: 'phishing', count: 6, interval: 950 }]
+                ],
+                reward: { money: 300, xp: 100 },
+                unlocks: ['honeypot']
+            },
+            {
+                name: "Nivel 4: Amenaza Extrema",
+                description: "Zero-Day, Fuerza Bruta y todos los ataques combinados",
+                waves: [
+                    [{ type: 'bruteforce', count: 5, interval: 1200 }, { type: 'sql', count: 7, interval: 900 }],
+                    [{ type: 'zeroday', count: 3, interval: 1800 }, { type: 'xss', count: 8, interval: 800 }],
+                    [{ type: 'ransomware', count: 6, interval: 1000 }, { type: 'bruteforce', count: 5, interval: 1100 }, { type: 'mitm', count: 5, interval: 1050 }],
+                    [{ type: 'zeroday', count: 4, interval: 1500 }, { type: 'dos', count: 5, interval: 1200 }, { type: 'trojan', count: 7, interval: 900 }, { type: 'malware', count: 7, interval: 850 }],
+                    [{ type: 'zeroday', count: 5, interval: 1300 }, { type: 'bruteforce', count: 6, interval: 1000 }, { type: 'ransomware', count: 6, interval: 950 }, { type: 'dos', count: 5, interval: 1100 }, { type: 'mitm', count: 6, interval: 900 }],
+                    [{ type: 'sql', count: 10, interval: 700 }, { type: 'xss', count: 10, interval: 650 }, { type: 'phishing', count: 8, interval: 750 }, { type: 'malware', count: 8, interval: 800 }, { type: 'dos', count: 6, interval: 1000 }, { type: 'zeroday', count: 3, interval: 1500 }]
+                ],
+                reward: { money: 400, xp: 150 },
+                unlocks: []
+            },
+            {
+                name: "Nivel 5: Amenazas Persistentes",
+                description: "Botnets, Spyware y ataques coordinados",
+                waves: [
+                    [{ type: 'botnet', count: 4, interval: 1600 }, { type: 'spyware', count: 6, interval: 1100 }],
+                    [{ type: 'keylogger', count: 5, interval: 1200 }, { type: 'trojan', count: 6, interval: 1000 }],
+                    [{ type: 'botnet', count: 5, interval: 1400 }, { type: 'spyware', count: 7, interval: 950 }, { type: 'keylogger', count: 5, interval: 1100 }],
+                    [{ type: 'rootkit', count: 3, interval: 1800 }, { type: 'botnet', count: 6, interval: 1200 }],
+                    [{ type: 'spyware', count: 8, interval: 900 }, { type: 'keylogger', count: 7, interval: 1000 }, { type: 'rootkit', count: 4, interval: 1600 }]
+                ],
+                reward: { money: 450, xp: 175 },
+                unlocks: []
+            },
+            {
+                name: "Nivel 6: Propagación Masiva",
+                description: "Gusanos y ataques de propagación rápida",
+                waves: [
+                    [{ type: 'worm', count: 6, interval: 1100 }],
+                    [{ type: 'worm', count: 8, interval: 1000 }, { type: 'malware', count: 7, interval: 950 }],
+                    [{ type: 'worm', count: 10, interval: 900 }, { type: 'trojan', count: 8, interval: 1000 }],
+                    [{ type: 'worm', count: 12, interval: 800 }, { type: 'ransomware', count: 6, interval: 1100 }],
+                    [{ type: 'worm', count: 15, interval: 700 }, { type: 'botnet', count: 5, interval: 1200 }]
+                ],
+                reward: { money: 500, xp: 200 },
+                unlocks: ['quantum']
+            },
+            {
+                name: "Nivel 7: Ataques Combinados I",
+                description: "Múltiples vectores de ataque simultáneos",
+                waves: [
+                    [{ type: 'sql', count: 8, interval: 900 }, { type: 'xss', count: 8, interval: 850 }, { type: 'phishing', count: 6, interval: 1000 }],
+                    [{ type: 'malware', count: 7, interval: 950 }, { type: 'trojan', count: 7, interval: 900 }, { type: 'ransomware', count: 5, interval: 1100 }],
+                    [{ type: 'dos', count: 6, interval: 1200 }, { type: 'bruteforce', count: 6, interval: 1000 }, { type: 'mitm', count: 6, interval: 950 }],
+                    [{ type: 'zeroday', count: 4, interval: 1500 }, { type: 'botnet', count: 5, interval: 1100 }, { type: 'spyware', count: 7, interval: 900 }],
+                    [{ type: 'keylogger', count: 8, interval: 850 }, { type: 'rootkit', count: 4, interval: 1400 }, { type: 'worm', count: 10, interval: 800 }]
+                ],
+                reward: { money: 600, xp: 250 },
+                unlocks: []
+            },
+            {
+                name: "Nivel 8: Ataques Combinados II",
+                description: "Ataques más rápidos y resistentes",
+                waves: [
+                    [{ type: 'sql', count: 10, interval: 800 }, { type: 'xss', count: 10, interval: 750 }, { type: 'phishing', count: 8, interval: 900 }],
+                    [{ type: 'malware', count: 9, interval: 850 }, { type: 'trojan', count: 9, interval: 800 }, { type: 'ransomware', count: 7, interval: 1000 }],
+                    [{ type: 'dos', count: 7, interval: 1100 }, { type: 'bruteforce', count: 7, interval: 950 }, { type: 'mitm', count: 7, interval: 900 }],
+                    [{ type: 'zeroday', count: 5, interval: 1400 }, { type: 'botnet', count: 6, interval: 1000 }, { type: 'spyware', count: 9, interval: 800 }],
+                    [{ type: 'keylogger', count: 10, interval: 750 }, { type: 'rootkit', count: 5, interval: 1300 }, { type: 'worm', count: 12, interval: 700 }],
+                    [{ type: 'sql', count: 12, interval: 700 }, { type: 'xss', count: 12, interval: 650 }, { type: 'phishing', count: 10, interval: 800 }, 
+                     { type: 'malware', count: 10, interval: 750 }, { type: 'trojan', count: 10, interval: 700 }, { type: 'ransomware', count: 8, interval: 900 }]
+                ],
+                reward: { money: 700, xp: 300 },
+                unlocks: []
+            },
+            {
+                name: "Nivel 9: Asalto Final I",
+                description: "La tormenta perfecta de ciberataques",
+                waves: [
+                    [{ type: 'dos', count: 8, interval: 1000 }, { type: 'bruteforce', count: 8, interval: 900 }, { type: 'mitm', count: 8, interval: 850 }],
+                    [{ type: 'zeroday', count: 6, interval: 1300 }, { type: 'botnet', count: 7, interval: 950 }, { type: 'spyware', count: 10, interval: 750 }],
+                    [{ type: 'keylogger', count: 12, interval: 700 }, { type: 'rootkit', count: 6, interval: 1200 }, { type: 'worm', count: 15, interval: 650 }],
+                    [{ type: 'sql', count: 15, interval: 600 }, { type: 'xss', count: 15, interval: 550 }, { type: 'phishing', count: 12, interval: 700 }],
+                    [{ type: 'malware', count: 12, interval: 650 }, { type: 'trojan', count: 12, interval: 600 }, { type: 'ransomware', count: 10, interval: 800 }],
+                    [{ type: 'dos', count: 10, interval: 900 }, { type: 'bruteforce', count: 10, interval: 800 }, { type: 'mitm', count: 10, interval: 750 },
+                     { type: 'zeroday', count: 8, interval: 1100 }, { type: 'botnet', count: 8, interval: 850 }, { type: 'spyware', count: 12, interval: 650 }]
+                ],
+                reward: { money: 800, xp: 350 },
+                unlocks: []
+            },
+            {
+                name: "Nivel 10: Asalto Final II",
+                description: "El desafío definitivo para el defensor de ciberseguridad",
+                waves: [
+                    [{ type: 'keylogger', count: 15, interval: 600 }, { type: 'rootkit', count: 8, interval: 1100 }, { type: 'worm', count: 20, interval: 550 }],
+                    [{ type: 'sql', count: 20, interval: 500 }, { type: 'xss', count: 20, interval: 450 }, { type: 'phishing', count: 15, interval: 600 }],
+                    [{ type: 'malware', count: 15, interval: 550 }, { type: 'trojan', count: 15, interval: 500 }, { type: 'ransomware', count: 12, interval: 700 }],
+                    [{ type: 'dos', count: 12, interval: 800 }, { type: 'bruteforce', count: 12, interval: 700 }, { type: 'mitm', count: 12, interval: 650 }],
+                    [{ type: 'zeroday', count: 10, interval: 1000 }, { type: 'botnet', count: 10, interval: 750 }, { type: 'spyware', count: 15, interval: 550 }],
+                    [{ type: 'keylogger', count: 18, interval: 500 }, { type: 'rootkit', count: 10, interval: 1000 }, { type: 'worm', count: 25, interval: 450 },
+                     { type: 'sql', count: 25, interval: 400 }, { type: 'xss', count: 25, interval: 350 }, { type: 'phishing', count: 18, interval: 500 },
+                     { type: 'malware', count: 18, interval: 450 }, { type: 'trojan', count: 18, interval: 400 }, { type: 'ransomware', count: 15, interval: 600 },
+                     { type: 'dos', count: 15, interval: 700 }, { type: 'bruteforce', count: 15, interval: 600 }, { type: 'mitm', count: 15, interval: 550 },
+                     { type: 'zeroday', count: 12, interval: 900 }, { type: 'botnet', count: 12, interval: 650 }, { type: 'spyware', count: 18, interval: 450 }]
+                ],
+                reward: { money: 1000, xp: 500 },
+                unlocks: []
+            }
+        ];
+
+        let currentLevel = 0;
+        let currentWaveInLevel = 0;
+        let levelCompleted = false;
+
+        // Tipos de bonificaciones
+        const bonusTypes = {
+            coin: { color: '#ffd700', emoji: '💰', value: 50 },
+            health: { color: '#ff4444', emoji: '❤️', value: 10 },
+            xp: { color: '#64b5f6', emoji: '⭐', value: 25 }
+        };
+
+        // Dibujar el mapa
+        function drawMap() {
+            // Fondo
+            ctx.fillStyle = '#0a1929';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Dibujar camino
+            ctx.strokeStyle = '#1e3a5f';
+            ctx.lineWidth = 60;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            ctx.moveTo(path[0].x, path[0].y);
+            for (let i = 1; i < path.length; i++) {
+                ctx.lineTo(path[i].x, path[i].y);
+            }
+            ctx.stroke();
+
+            // Borde del camino
+            ctx.strokeStyle = '#64b5f6';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Servidor al final
+            ctx.fillStyle = '#00ff41';
+            ctx.font = 'bold 40px Arial';
+            ctx.fillText('🖥️', path[path.length - 1].x - 20, path[path.length - 1].y + 15);
+            ctx.font = 'bold 12px Courier New';
+            ctx.fillText('SERVIDOR', path[path.length - 1].x - 30, path[path.length - 1].y + 35);
+        }
+
+        // Crear enemigo
+        function spawnEnemy(type) {
+            const enemyData = enemyTypes[type];
+            enemies.push({
+                type: type,
+                health: enemyData.health,
+                maxHealth: enemyData.health,
+                speed: enemyData.speed,
+                reward: enemyData.reward,
+                pathIndex: 0,
+                x: path[0].x,
+                y: path[0].y,
+                progress: 0
+            });
+        }
+
+        // Mover enemigos
+        function moveEnemies() {
+            enemies.forEach((enemy, index) => {
+                if (enemy.pathIndex < path.length - 1) {
+                    const current = path[enemy.pathIndex];
+                    const next = path[enemy.pathIndex + 1];
+                    const dx = next.x - current.x;
+                    const dy = next.y - current.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    enemy.progress += enemy.speed;
+                    
+                    if (enemy.progress >= distance) {
+                        enemy.progress = 0;
+                        enemy.pathIndex++;
+                        if (enemy.pathIndex < path.length) {
+                            enemy.x = path[enemy.pathIndex].x;
+                            enemy.y = path[enemy.pathIndex].y;
+                        }
+                    } else {
+                        enemy.x = current.x + (dx / distance) * enemy.progress;
+                        enemy.y = current.y + (dy / distance) * enemy.progress;
+                    }
+                } else {
+                    // Llegó al servidor
+                    gameState.health -= 10;
+                    updateUI();
+                    showMessage('⚠️ ¡El servidor ha sido atacado! -10 HP', '#ff4444');
+                    enemies.splice(index, 1);
+                    
+                    if (gameState.health <= 0) {
+                        endGame(false);
+                    }
+                }
+            });
+        }
+
+        // Dibujar enemigos
+        function drawEnemies() {
+            enemies.forEach(enemy => {
+                const enemyData = enemyTypes[enemy.type];
+                
+                // Cuerpo del enemigo
+                ctx.fillStyle = enemyData.color;
+                ctx.beginPath();
+                ctx.arc(enemy.x, enemy.y, 15, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Emoji
+                ctx.font = '20px Arial';
+                ctx.fillText(enemyData.emoji, enemy.x - 10, enemy.y + 8);
+                
+                // Barra de vida
+                const healthPercent = enemy.health / enemy.maxHealth;
+                ctx.fillStyle = '#333';
+                ctx.fillRect(enemy.x - 15, enemy.y - 25, 30, 4);
+                ctx.fillStyle = healthPercent > 0.5 ? '#00ff41' : (healthPercent > 0.25 ? '#ffc107' : '#ff4444');
+                ctx.fillRect(enemy.x - 15, enemy.y - 25, 30 * healthPercent, 4);
+            });
+        }
+
+        // Construir defensa
+        function buildDefense(x, y) {
+            if (!gameState.selectedDefense) {
+                showMessage('⚠️ Selecciona una defensa primero', '#ffc107');
+                return;
+            }
+
+            const defenseData = defenseTypes[gameState.selectedDefense];
+            
+            if (gameState.money < defenseData.cost) {
+                showMessage('⚠️ Dinero insuficiente', '#ff4444');
+                return;
+            }
+
+            // Verificar que no esté en el camino
+            let onPath = false;
+            for (let i = 0; i < path.length - 1; i++) {
+                const p1 = path[i];
+                const p2 = path[i + 1];
+                const dist = distanceToLineSegment(x, y, p1.x, p1.y, p2.x, p2.y);
+                if (dist < 40) {
+                    onPath = true;
+                    break;
+                }
+            }
+
+            if (onPath) {
+                showMessage('⚠️ No puedes construir en el camino', '#ff4444');
+                return;
+            }
+
+            // Verificar que no haya otra defensa cerca
+            for (let def of defenses) {
+                const dist = Math.sqrt((x - def.x) ** 2 + (y - def.y) ** 2);
+                if (dist < 40) {
+                    showMessage('⚠️ Muy cerca de otra defensa', '#ff4444');
+                    return;
+                }
+            }
+
+            defenses.push({
+                type: gameState.selectedDefense,
+                x: x,
+                y: y,
+                cooldown: 0
+            });
+
+            gameState.money -= defenseData.cost;
+            gameState.score += 10;
+            updateUI();
+            showMessage(`✅ ${defenseData.name} construido`, '#00ff41');
+        }
+
+        // Distancia a segmento de línea
+        function distanceToLineSegment(px, py, x1, y1, x2, y2) {
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const t = Math.max(0, Math.min(1, ((px - x1) * dx + (py - y1) * dy) / (dx * dx + dy * dy)));
+            const nearestX = x1 + t * dx;
+            const nearestY = y1 + t * dy;
+            return Math.sqrt((px - nearestX) ** 2 + (py - nearestY) ** 2);
+        }
+
+        // Actualizar defensas (atacar)
+        function updateDefenses() {
+            defenses.forEach(defense => {
+                const defenseData = defenseTypes[defense.type];
+                
+                if (defense.cooldown > 0) {
+                    defense.cooldown--;
+                    return;
+                }
+
+                // Buscar enemigo en rango
+                for (let enemy of enemies) {
+                    const dist = Math.sqrt((defense.x - enemy.x) ** 2 + (defense.y - enemy.y) ** 2);
+                    
+                    if (dist <= defenseData.range) {
+                        // Calcular daño (más si es efectivo)
+                        let damage = defenseData.damage;
+                        if (defenseData.effective.includes(enemy.type) || defenseData.effective.includes('all')) {
+                            damage *= 2;
+                        }
+
+                        enemy.health -= damage;
+                        defense.cooldown = 30; // Cooldown de 30 frames
+                        
+                        // Efecto visual
+                        drawAttackEffect(defense.x, defense.y, enemy.x, enemy.y);
+
+                        // Posibilidad de soltar bonus al eliminar enemigo
+                        if (enemy.health <= 0) {
+                            gameState.money += enemyTypes[enemy.type].reward;
+                            gameState.score += enemyTypes[enemy.type].reward;
+                            addXP(enemyTypes[enemy.type].reward / 2);
+                            
+                            // 20% de probabilidad de soltar bonus
+                            if (Math.random() < 0.2) {
+                                createBonus(enemy.x, enemy.y);
+                            }
+                            
+                            updateUI();
+                            enemies.splice(enemies.indexOf(enemy), 1);
+                        }
+                        break;
+                    }
+                }
+            });
+        }
+
+        // Dibujar efecto de ataque
+        function drawAttackEffect(x1, y1, x2, y2) {
+            ctx.strokeStyle = '#00ff41';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+        }
+
+        // Dibujar defensas
+        function drawDefenses() {
+            defenses.forEach(defense => {
+                const defenseData = defenseTypes[defense.type];
+                
+                // Rango (semi-transparente)
+                ctx.fillStyle = defenseData.color + '20';
+                ctx.beginPath();
+                ctx.arc(defense.x, defense.y, defenseData.range, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Torre
+                ctx.fillStyle = defenseData.color;
+                ctx.fillRect(defense.x - 15, defense.y - 15, 30, 30);
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(defense.x - 15, defense.y - 15, 30, 30);
+                
+                // Emoji
+                ctx.font = '24px Arial';
+                ctx.fillText(defenseData.emoji, defense.x - 12, defense.y + 8);
+            });
+        }
+
+        // Crear bonus
+        function createBonus(x, y) {
+            const bonusTypesArray = Object.keys(bonusTypes);
+            const randomType = bonusTypesArray[Math.floor(Math.random() * bonusTypesArray.length)];
+            
+            gameState.bonuses.push({
+                type: randomType,
+                x: x,
+                y: y,
+                width: 20,
+                height: 20,
+                collected: false
+            });
+        }
+
+        // Dibujar y actualizar bonificaciones
+        function updateBonuses() {
+            gameState.bonuses.forEach((bonus, index) => {
+                if (!bonus.collected) {
+                    const bonusData = bonusTypes[bonus.type];
+                    
+                    // Dibujar bonus
+                    ctx.fillStyle = bonusData.color;
+                    ctx.beginPath();
+                    ctx.arc(bonus.x, bonus.y, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Emoji
+                    ctx.font = '16px Arial';
+                    ctx.fillText(bonusData.emoji, bonus.x - 8, bonus.y + 6);
+                    
+                    // Verificar colisión con defensas (para recoger)
+                    defenses.forEach(defense => {
+                        const dist = Math.sqrt((defense.x - bonus.x) ** 2 + (defense.y - bonus.y) ** 2);
+                        if (dist < 30 && !bonus.collected) {
+                            bonus.collected = true;
+                            applyBonus(bonus.type);
+                        }
+                    });
+                }
+                
+                // Eliminar bonus recolectados
+                if (bonus.collected) {
+                    gameState.bonuses.splice(index, 1);
+                }
+            });
+        }
+
+        // Aplicar efecto de bonus
+        function applyBonus(type) {
+            const bonusData = bonusTypes[type];
+            
+            switch(type) {
+                case 'coin':
+                    gameState.money += bonusData.value;
+                    showMessage(`💰 ¡Bonus de +${bonusData.value} monedas!`, '#ffd700');
+                    break;
+                case 'health':
+                    gameState.health = Math.min(gameState.health + bonusData.value, 100);
+                    showMessage(`❤️ ¡Bonus de +${bonusData.value} salud!`, '#ff4444');
+                    break;
+                case 'xp':
+                    addXP(bonusData.value);
+                    showMessage(`⭐ ¡Bonus de +${bonusData.value} experiencia!`, '#64b5f6');
+                    break;
+            }
+            
+            updateUI();
+        }
+
+        // Añadir experiencia y subir de nivel
+        function addXP(amount) {
+            gameState.xp += amount;
+            
+            // Verificar si sube de nivel
+            if (gameState.xp >= gameState.xpToNextLevel) {
+                gameState.playerLevel++;
+                gameState.xp = gameState.xp - gameState.xpToNextLevel;
+                gameState.xpToNextLevel = Math.floor(gameState.xpToNextLevel * 1.2); // Aumenta para el siguiente nivel
+                
+                // Recompensas por subir de nivel
+                gameState.money += 100 * gameState.playerLevel;
+                gameState.health = Math.min(gameState.health + 20, 100);
+                
+                showMessage(`🎉 ¡Subiste al nivel ${gameState.playerLevel}! +${100 * gameState.playerLevel} 💰 +20 ❤️`, '#00ff41');
+                
+                // Mejora de estadísticas según el nivel
+                if (gameState.playerLevel % 3 === 0) {
+                    // Cada 3 niveles, mejorar todas las defensas
+                    Object.keys(defenseTypes).forEach(type => {
+                        defenseTypes[type].damage += 2;
+                        defenseTypes[type].range += 5;
+                    });
+                    showMessage(`⚡ ¡Todas las defensas mejoradas! +2 daño, +5 rango`, '#00ff41');
+                }
+            }
+            
+            updateUI();
+        }
+
+        // Iniciar oleada
+        function startWave() {
+            if (gameState.waveActive || gameState.gameOver || levelCompleted) return;
+            
+            const level = levels[currentLevel];
+            
+            // Verificar si completó todas las oleadas del nivel actual
+            if (currentWaveInLevel >= level.waves.length) {
+                completeLevel();
+                return;
+            }
+
+            gameState.waveActive = true;
+            const currentWave = level.waves[currentWaveInLevel];
+            showMessage(`🌊 Nivel ${gameState.level} - Oleada ${gameState.wave} iniciada`, '#64b5f6');
+
+            currentWave.forEach(spawn => {
+                let spawned = 0;
+                const spawnInterval = setInterval(() => {
+                    if (spawned < spawn.count && !gameState.gameOver && !levelCompleted) {
+                        spawnEnemy(spawn.type);
+                        spawned++;
+                    } else {
+                        clearInterval(spawnInterval);
+                    }
+                }, spawn.interval);
+            });
+
+            // Verificar fin de oleada
+            const checkWaveEnd = setInterval(() => {
+                if (enemies.length === 0 && gameState.waveActive) {
+                    clearInterval(checkWaveEnd);
+                    gameState.waveActive = false;
+                    currentWaveInLevel++;
+                    gameState.wave++;
+                    
+                    // Bonus por oleada completada
+                    const bonus = 100 + (currentLevel * 50);
+                    gameState.money += bonus;
+                    updateUI();
+                    showMessage(`✅ ¡Oleada completada! +${bonus} 💰`, '#00ff41');
+                }
+            }, 500);
+        }
+
+        // Completar nivel
+        function completeLevel() {
+            levelCompleted = true;
+            const level = levels[currentLevel];
+            
+            // Aplicar recompensas
+            gameState.money += level.reward.money;
+            addXP(level.reward.xp);
+            
+            // Mostrar pantalla de nivel completado
+            const levelCompleteScreen = document.getElementById('level-complete-screen');
+            document.getElementById('reward-money').textContent = `+${level.reward.money}`;
+            document.getElementById('reward-xp').textContent = `+${level.reward.xp}`;
+            
+            // Mostrar desbloqueos
+            if (level.unlocks.length > 0) {
+                level.unlocks.forEach(unlock => {
+                    document.getElementById(`${unlock}-button`).style.display = 'block';
+                    document.getElementById('reward-unlock').textContent = defenseTypes[unlock].name;
+                });
+            } else {
+                document.getElementById('reward-unlock').textContent = 'Ninguno';
+            }
+            
+            levelCompleteScreen.style.display = 'block';
+            
+            // Ocultar botón de iniciar oleada y mostrar botón de siguiente nivel
+            document.getElementById('start-wave').style.display = 'none';
+            document.getElementById('next-level').style.display = 'inline-block';
+        }
+
+        // Pasar al siguiente nivel
+        function nextLevel() {
+            currentLevel++;
+            currentWaveInLevel = 0;
+            levelCompleted = false;
+            
+            if (currentLevel >= levels.length) {
+                // Ganó todos los niveles
+                endGame(true);
+                return;
+            }
+            
+            // Nuevo nivel
+            gameState.level = currentLevel + 1;
+            gameState.wave = 1;
+            gameState.health = Math.min(gameState.health + 50, 100); // Restaurar algo de vida
+            
+            // Limpiar enemigos y bonificaciones
+            enemies = [];
+            gameState.bonuses = [];
+            
+            updateUI();
+            updateLevelInfo();
+            
+            // Ocultar pantalla de nivel completado
+            document.getElementById('level-complete-screen').style.display = 'none';
+            
+            // Mostrar botón de iniciar oleada y ocultar botón de siguiente nivel
+            document.getElementById('start-wave').style.display = 'inline-block';
+            document.getElementById('next-level').style.display = 'none';
+            
+            showMessage(`🎉 ¡Nivel ${currentLevel} completado! Avanzando al Nivel ${currentLevel + 1}.`, '#00ff41');
+        }
+
+        // Actualizar UI
+        function updateUI() {
+            document.getElementById('money').textContent = gameState.money;
+            document.getElementById('health').textContent = gameState.health;
+            document.getElementById('wave').textContent = gameState.wave;
+            document.getElementById('level').textContent = gameState.level;
+            document.getElementById('enemies').textContent = enemies.length;
+            document.getElementById('score').textContent = gameState.score;
+            document.getElementById('xp').textContent = `${Math.floor(gameState.xp)}/${gameState.xpToNextLevel}`;
+            document.getElementById('player-level').textContent = gameState.playerLevel;
+
+            // Actualizar botones de defensa
+            document.querySelectorAll('.defense-button').forEach(btn => {
+                const defenseType = btn.dataset.defense;
+                const cost = defenseTypes[defenseType].cost;
+                if (gameState.money < cost) {
+                    btn.classList.add('disabled');
+                } else {
+                    btn.classList.remove('disabled');
+                }
+            });
+        }
+
+        // Actualizar información del nivel
+        function updateLevelInfo() {
+            const level = levels[currentLevel];
+            document.getElementById('level-name').textContent = level.name;
+            document.getElementById('level-description').textContent = level.description;
+        }
+
+        // Mostrar mensaje
+        function showMessage(text, color = '#00ff41') {
+            const msgDiv = document.getElementById('messages');
+            msgDiv.textContent = text;
+            msgDiv.style.color = color;
+        }
+
+        // Fin del juego
+        function endGame(victory) {
+            gameState.gameOver = true;
+            const overlay = document.getElementById('game-over-screen');
+            overlay.style.display = 'block';
+            
+            if (victory) {
+                overlay.classList.add('victory');
+                overlay.classList.remove('defeat');
+                document.getElementById('game-over-title').textContent = '🎉 ¡VICTORIA TOTAL! 🎉';
+                document.getElementById('game-over-message').textContent = `¡Has completado los ${levels.length} niveles y protegido el servidor exitosamente!`;
+            } else {
+                overlay.classList.add('defeat');
+                overlay.classList.remove('victory');
+                document.getElementById('game-over-title').textContent = '💀 GAME OVER 💀';
+                document.getElementById('game-over-message').textContent = `El servidor fue comprometido en el Nivel ${gameState.level}, Oleada ${gameState.wave}`;
+            }
+            
+            document.getElementById('final-score').textContent = `Puntuación Final: ${gameState.score} | Nivel alcanzado: ${gameState.level} | Nivel de jugador: ${gameState.playerLevel}`;
+        }
+
+        // Loop principal del juego
+        function gameLoop() {
+            if (!gameState.gameOver) {
+                // Limpiar canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Dibujar todo
+                drawMap();
+                drawDefenses();
+                updateDefenses();
+                moveEnemies();
+                drawEnemies();
+                updateBonuses();
+                
+                requestAnimationFrame(gameLoop);
+            }
+        }
+
+        // Event Listeners
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            buildDefense(x, y);
+        });
+
+        document.querySelectorAll('.defense-button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (btn.classList.contains('disabled')) return;
+                
+                document.querySelectorAll('.defense-button').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                gameState.selectedDefense = btn.dataset.defense;
+                showMessage(`🔧 ${defenseTypes[btn.dataset.defense].name} seleccionado. Haz clic en el mapa para construir.`, '#64b5f6');
+            });
+        });
+
+        document.getElementById('start-wave').addEventListener('click', () => {
+            startWave();
+        });
+
+        document.getElementById('next-level').addEventListener('click', () => {
+            nextLevel();
+        });
+
+        document.getElementById('continue-button').addEventListener('click', () => {
+            nextLevel();
+        });
+
+        document.getElementById('toggle-glossary').addEventListener('click', () => {
+            const glossary = document.getElementById('glossary');
+            if (glossary.style.display === 'none' || glossary.style.display === '') {
+                glossary.style.display = 'block';
+                showMessage('📚 Glosario abierto - Aprende sobre las amenazas y defensas', '#64b5f6');
+            } else {
+                glossary.style.display = 'none';
+                showMessage('📚 Glosario cerrado', '#64b5f6');
+            }
+        });
+
+        // Inicializar juego
+        function initGame() {
+            updateUI();
+            updateLevelInfo();
+            gameLoop();
+        }
+
+        // Función para iniciar el juego desde la pantalla de inicio
+        function startGame() {
+            document.getElementById('start-screen').classList.add('hidden');
+            initGame();
+        }
+    </script>
+</body>
+</html>
